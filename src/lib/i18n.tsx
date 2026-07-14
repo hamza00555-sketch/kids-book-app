@@ -206,7 +206,10 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("ar");
 
   useEffect(() => {
+    // Re-applying the persisted language after hydration is intentional here:
+    // reading localStorage during render would break SSR/hydration.
     const saved = window.localStorage.getItem("lang");
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (saved === "en" || saved === "ar") setLangState(saved);
   }, []);
 
