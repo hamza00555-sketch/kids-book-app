@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+/* Warm, playful palette for a kids' book app. */
+:root {
+  --background: #fff8ef;
+  --foreground: #443328;
+  --card: #ffffff;
+  --coral: #ff7a59;
+  --coral-deep: #e85f3d;
+  --sky: #5bbfe4;
+  --sunshine: #ffd166;
+  --mint: #63cf97;
+  --berry: #a97fe0;
+  --line: #f0e4d3;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-coral: var(--coral);
+  --color-coral-deep: var(--coral-deep);
+  --color-sky: var(--sky);
+  --color-sunshine: var(--sunshine);
+  --color-mint: var(--mint);
+  --color-berry: var(--berry);
+  --color-line: var(--line);
+  --font-sans: var(--font-baloo);
+  --radius-blob: 1.75rem;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-baloo), ui-rounded, "Segoe UI", system-ui, sans-serif;
+}
+
+/* Gentle float used for decorative elements and idle characters. */
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.animate-float-soft {
+  animation: float-soft 3.2s ease-in-out infinite;
+}
+
+@keyframes pop-in {
+  0% { transform: scale(0.6); opacity: 0; }
+  70% { transform: scale(1.06); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.animate-pop-in {
+  animation: pop-in 0.35s ease-out both;
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(255, 122, 89, 0.45); }
+  100% { box-shadow: 0 0 0 18px rgba(255, 122, 89, 0); }
+}
+.animate-pulse-ring {
+  animation: pulse-ring 1.6s ease-out infinite;
+}
