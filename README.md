@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📖✨ كتابي الحي — My Living Book
 
-## Getting Started
+تطبيق ويب (WebAR) يجعل صور كتب الأطفال تنبض بالحياة: الطفل يمسح رمز QR واحداً على غلاف الكتاب، يوجّه كاميرا الجوال على أي صورة في الكتاب، فيتعرف التطبيق عليها من مكتبة الصور المرجعية ويعرض المجسّم ثلاثي الأبعاد المتحرك الخاص بها ملتصقاً بالصفحة — **بدون تثبيت أي تطبيق، من المتصفح مباشرة** (أندرويد وآيفون).
 
-First, run the development server:
+## كيف يعمل؟
+
+**للناشر (لوحة التحكم):**
+1. أنشئ كتاباً وأضف صفحاته — لكل صفحة: الصورة المرجعية (نفس المطبوعة) + مجسّم GLB متحرك + صوت اختياري، مع معاينة ثلاثية الأبعاد حية ومطابقة تماماً لما سيراه الطفل.
+2. اضغط «تجهيز الكتاب للمسح» — تُجمَّع كل صور الكتاب في ملف تعرّف واحد (`.mind`) داخل متصفحك.
+3. انشر ونزّل رمز QR واطبعه على الغلاف.
+
+**للطفل:**
+مسح QR واحد → «ابدأ المغامرة!» → توجيه الكاميرا على أي صورة → الشخصية تظهر وتتحرك فوق الصفحة 🎉 مع زر «قرّب الشخصية» للتدوير والتكبير باللمس.
+
+## المكدس
+
+Next.js (App Router) + React + TypeScript + Tailwind v4 + three.js + MindAR (تتبع الصور) + Supabase (قاعدة بيانات + تخزين) + Vercel.
+
+## التشغيل
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev   # يعمل فوراً بوضع التخزين المحلي، بدون أي إعداد
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+للنشر الإنتاجي والتفاصيل الكاملة راجع **[SETUP.md](./SETUP.md)**.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ملاحظات مهمة
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **جرّب على جوال حقيقي** — كل سلوكيات WebAR (الكاميرا، التتبع، الأداء) لا تظهر إلا على الأجهزة الحقيقية.
+- للمعاينة بدون كتاب مطبوع: أضف `?demo=1` لرابط الكتاب — يحاكي العثور على الصفحة الأولى.
+- الواجهة ثنائية اللغة (عربي/إنجليزي) مع دعم RTL كامل.

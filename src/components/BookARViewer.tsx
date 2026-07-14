@@ -31,6 +31,7 @@ export default function BookARViewer({ book }: { book: Book }) {
 
   const viewerHandle = useRef<TrackedViewerHandle | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const chimeRef = useRef<HTMLAudioElement | null>(null);
   const audioActiveRef = useRef(false);
   const discoveredRef = useRef(new Set<number>());
   const mutedRef = useRef(false);
@@ -61,6 +62,18 @@ export default function BookARViewer({ book }: { book: Book }) {
       .catch(() => {
         /* empty src — expected */
       });
+    // Unlock the discovery chime the same way (Safari needs the gesture chain).
+    const chime = new Audio("/sounds/discover.wav");
+    chimeRef.current = chime;
+    chime
+      .play()
+      .then(() => {
+        chime.pause();
+        chime.currentTime = 0;
+      })
+      .catch(() => {
+        /* non-fatal */
+      });
     void trackView(book.id);
     setScreen("ar");
   };
@@ -89,7 +102,13 @@ export default function BookARViewer({ book }: { book: Book }) {
       if (page) playPageAudio(page);
       if (!discoveredRef.current.has(index)) {
         discoveredRef.current.add(index);
-        if (book.config.celebrate !== false) confettiBurst();
+        if (book.config.celebrate !== false) {
+          confettiBurst();
+          if (!mutedRef.current && chimeRef.current) {
+            chimeRef.current.currentTime = 0;
+            chimeRef.current.play().catch(() => {});
+          }
+        }
       }
       setJustFound(true);
       setTimeout(() => setJustFound(false), 2200);
