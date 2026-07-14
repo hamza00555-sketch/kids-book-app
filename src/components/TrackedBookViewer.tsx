@@ -145,33 +145,41 @@ export default function TrackedBookViewer({
 
       const postMatrices: ThreeNS.Matrix4[] = [];
 
+      const applyTargetUpdate = (i: number, worldMatrix: number[] | null) => {
+        const slot = slots[i];
+        if (!slot || !postMatrices[i]) return;
+        if (worldMatrix !== null) {
+          const m = new THREE.Matrix4();
+          m.elements = [...worldMatrix] as unknown as ThreeNS.Matrix4["elements"];
+          m.multiply(postMatrices[i]);
+          slot.anchor.matrix = m;
+        }
+        const nowVisible = worldMatrix !== null;
+        if (nowVisible !== slot.visible) {
+          slot.visible = nowVisible;
+          slot.anchor.visible = nowVisible && exploreIndex === null;
+          if (nowVisible) {
+            void ensureModel(i);
+            cbRef.current.onTargetFound(i);
+          } else {
+            cbRef.current.onTargetLost(i);
+          }
+        }
+      };
+
       const controller = new Controller({
         inputWidth: video.videoWidth,
         inputHeight: video.videoHeight,
         maxTrack: 1, // one open page at a time — best tracking performance
         onUpdate: (data: { type: string; targetIndex?: number; worldMatrix?: number[] | null }) => {
+          // Lightweight field-debugging counters (readable from the console).
+          const w = window as unknown as { __arStats?: Record<string, number> };
+          const stats = (w.__arStats ??= { updates: 0, matrixUpdates: 0, found: 0 });
+          stats.updates++;
           if (data.type !== "updateMatrix") return;
-          const i = data.targetIndex!;
-          const slot = slots[i];
-          if (!slot || !postMatrices[i]) return;
-          const worldMatrix = data.worldMatrix ?? null;
-          if (worldMatrix !== null) {
-            const m = new THREE.Matrix4();
-            m.elements = [...worldMatrix] as unknown as ThreeNS.Matrix4["elements"];
-            m.multiply(postMatrices[i]);
-            slot.anchor.matrix = m;
-          }
-          const nowVisible = worldMatrix !== null;
-          if (nowVisible !== slot.visible) {
-            slot.visible = nowVisible;
-            slot.anchor.visible = nowVisible && exploreIndex === null;
-            if (nowVisible) {
-              void ensureModel(i);
-              cbRef.current.onTargetFound(i);
-            } else {
-              cbRef.current.onTargetLost(i);
-            }
-          }
+          stats.matrixUpdates++;
+          if (data.worldMatrix) stats.found++;
+          applyTargetUpdate(data.targetIndex!, data.worldMatrix ?? null);
         },
       });
       cleanups.push(() => {
@@ -369,6 +377,16 @@ export default function TrackedBookViewer({
       if (disposed) return;
       controller.processVideo(video);
       cbRef.current.onReady();
+
+      // Demo mode (?demo=1): simulate finding the first page a moment after
+      // start, so the experience can be previewed without the printed book.
+      if (new URLSearchParams(window.location.search).has("demo") && dims.length > 0) {
+        const [w] = dims[0];
+        const s = 0.35 / w; // page floats ~arm's length, filling ~half the view
+        const demoMatrix = [s, 0, 0, 0, 0, s, 0, 0, 0, 0, s, 0, 0, -0.03, -0.55, 1];
+        const timer = setTimeout(() => applyTargetUpdate(0, demoMatrix), 2500);
+        cleanups.push(() => clearTimeout(timer));
+      }
     })().catch((e) => {
       if (!disposed) cbRef.current.onError("load", e instanceof Error ? e.message : String(e));
     });
