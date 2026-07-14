@@ -45,14 +45,22 @@ function rowToPage(row: Row): BookPage {
   };
 }
 
-/** Production store: Supabase Postgres. Uses the secret key — server only. */
+/**
+ * Production store: Supabase Postgres. Uses the secret key — server only.
+ * All tables live in the dedicated "kidsbook" schema so the app can share a
+ * Supabase project with other apps and be split out later without code changes.
+ */
 export class SupabaseStore implements BookStore {
-  private client: SupabaseClient;
+  // Schema-typed client: every .from()/.rpc() targets the "kidsbook" schema.
+  private client: SupabaseClient<any, any, "kidsbook">;
 
   constructor() {
     const env = getSupabaseEnv();
     if (!env) throw new Error("SupabaseStore constructed without SUPABASE_URL/SUPABASE_SECRET_KEY");
-    this.client = createClient(env.url, env.secretKey, { auth: { persistSession: false } });
+    this.client = createClient(env.url, env.secretKey, {
+      auth: { persistSession: false },
+      db: { schema: "kidsbook" },
+    });
   }
 
   private async pagesOf(bookIds: string[]): Promise<Map<string, BookPage[]>> {
