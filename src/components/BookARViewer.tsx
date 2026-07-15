@@ -17,7 +17,7 @@ import type { Book, BookPage } from "@/lib/types";
 type Screen = "start" | "inapp" | "desktop" | "ar";
 
 export default function BookARViewer({ book }: { book: Book }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const pages: BookPage[] = (book.pages ?? []).slice().sort((a, b) => a.targetIndex - b.targetIndex);
 
   const [screen, setScreen] = useState<Screen>("start");
@@ -183,28 +183,45 @@ export default function BookARViewer({ book }: { book: Book }) {
   // ---------- Start screen ----------
   if (screen === "start") {
     return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center gap-6 p-6 text-center bg-gradient-to-b from-sky/25 via-background to-sunshine/30">
-        <div className="animate-float-soft">
-          {book.coverUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={book.coverUrl}
-              alt=""
-              className="w-44 h-56 object-cover rounded-blob border-4 border-white shadow-xl rotate-2"
-            />
-          ) : (
-            <div className="text-8xl">📖</div>
-          )}
+      <div className="hayya-ar-start fixed inset-0 overflow-hidden text-white">
+        <div className="absolute top-5 inset-x-5 z-10 flex items-center justify-between">
+          <span className="inline-flex items-center gap-2 font-extrabold tracking-[-.04em] text-xl">
+            <HayyaMarkLight /> هَيّا
+          </span>
+          <span className="px-3 py-1.5 rounded-full border border-white/15 bg-black/15 backdrop-blur-md text-[10px] font-bold">
+            ✦ {lang === "ar" ? "حكاية تفاعلية" : "Interactive story"}
+          </span>
         </div>
-        <h1 className="text-3xl font-bold">{book.title}</h1>
-        {book.description && <p className="opacity-70 max-w-sm">{book.description}</p>}
-        <button
-          onClick={start}
-          style={{ backgroundColor: accent }}
-          className="animate-pulse-ring px-10 py-5 rounded-full text-white text-2xl font-bold shadow-xl active:scale-95 transition-transform"
-        >
-          ✨ {t("startAdventure")}
-        </button>
+
+        <div className="absolute inset-x-0 bottom-0 z-10 p-6 sm:p-10 pb-[max(2rem,env(safe-area-inset-bottom))]">
+          <div className="mx-auto max-w-lg text-center flex flex-col items-center">
+            <div className="animate-float-soft mb-5">
+              {book.coverUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={book.coverUrl}
+                  alt=""
+                  className="w-28 h-36 sm:w-36 sm:h-44 object-cover rounded-[1.1rem] border-2 border-white/55 shadow-2xl rotate-2"
+                />
+              ) : (
+                <div className="w-24 h-24 rounded-full bg-sunshine/15 border border-sunshine/30 grid place-items-center text-6xl backdrop-blur">📖</div>
+              )}
+            </div>
+            <span className="text-[10px] text-sunshine tracking-[.18em] font-bold">{t("tagline")}</span>
+            <h1 className="mt-2 text-4xl sm:text-5xl font-extrabold tracking-[-.055em] leading-tight">{book.title}</h1>
+            {book.description && <p className="mt-3 text-sm text-white/65 max-w-sm leading-7 line-clamp-2">{book.description}</p>}
+            <button
+              onClick={start}
+              style={{ backgroundColor: accent }}
+              className="animate-pulse-ring mt-6 w-full max-w-sm px-8 py-4 rounded-2xl text-white text-lg font-extrabold shadow-2xl active:scale-[.98] transition-transform"
+            >
+              <span className="inline-flex items-center gap-2"><ScanIcon /> {t("startAdventure")}</span>
+            </button>
+            <p className="mt-3 text-[9px] text-white/42">
+              {lang === "ar" ? "الكاميرا للعرض المباشر فقط — لا نحفظ أي صور" : "Live camera only — no images are saved"}
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
@@ -225,18 +242,20 @@ export default function BookARViewer({ book }: { book: Book }) {
         }
       />
 
-      {/* Soft rounded frame */}
-      <div className="pointer-events-none absolute inset-3 rounded-[2rem] border-4 border-white/40 z-10" />
+      {/* Hayya tracking frame */}
+      <div className="hayya-scan-frame z-10">
+        <i /><i /><i /><i />
+      </div>
 
       {/* Top bar */}
       <div className="absolute top-5 inset-x-5 z-20 flex items-center gap-2">
-        <span className="px-3 py-1.5 rounded-full bg-black/45 text-white text-sm font-bold backdrop-blur">
-          📖 {book.title}
+        <span className="px-3 py-2 rounded-full bg-navy/65 border border-white/15 text-white text-sm font-bold backdrop-blur-xl inline-flex items-center gap-2">
+          <HayyaMarkLight /> <span className="max-w-40 truncate">{book.title}</span>
         </span>
         <button
           onClick={toggleMute}
           aria-label={muted ? t("unmute") : t("mute")}
-          className="ms-auto w-11 h-11 rounded-full bg-black/45 text-white text-lg backdrop-blur active:scale-90 transition-transform"
+          className="ms-auto w-11 h-11 rounded-full bg-navy/65 border border-white/15 text-white text-lg backdrop-blur-xl active:scale-90 transition-transform"
         >
           {muted ? "🔇" : "🔊"}
         </button>
@@ -253,8 +272,10 @@ export default function BookARViewer({ book }: { book: Book }) {
       {ready && activeIndex === null && !exploring && (
         <Center>
           <div className="text-center">
-            <div className="text-5xl mb-2 animate-float-soft">🔍</div>
-            <p className="px-5 py-3 rounded-full bg-black/55 text-white font-bold backdrop-blur">
+            <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-sunshine/15 border border-sunshine/35 grid place-items-center text-sunshine animate-float-soft backdrop-blur-xl">
+              <ScanIcon />
+            </div>
+            <p className="px-5 py-3 rounded-full bg-navy/70 border border-white/15 text-white font-bold backdrop-blur-xl">
               {t("pointCamera")}
             </p>
           </div>
@@ -269,8 +290,8 @@ export default function BookARViewer({ book }: { book: Book }) {
       )}
       {justFound && activePage && !exploring && (
         <div className="absolute top-20 inset-x-0 z-20 flex justify-center animate-pop-in">
-          <span className="px-5 py-2.5 rounded-full bg-sunshine text-foreground font-bold shadow-lg">
-            {t("foundIt")} {activePage.title}
+          <span className="px-5 py-2.5 rounded-full bg-mint text-ink font-bold shadow-lg inline-flex items-center gap-2">
+            ✓ {t("foundIt")} {activePage.title}
           </span>
         </div>
       )}
@@ -313,10 +334,31 @@ function Center({ children }: { children: React.ReactNode }) {
 
 function FullScreenCard({ emoji, children }: { emoji: string; children: React.ReactNode }) {
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-b from-sky/25 via-background to-sunshine/30">
-      <div className="text-7xl mb-4">{emoji}</div>
-      {children}
+    <div className="fixed inset-0 flex flex-col items-center justify-center p-8 text-center bg-navy text-white overflow-hidden">
+      <div className="absolute inset-0 opacity-15 bg-[url('/hayya-hero.jpg')] bg-cover bg-center" />
+      <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/80 to-navy/35" />
+      <div className="relative text-7xl mb-4">{emoji}</div>
+      <div className="relative max-w-md">{children}</div>
     </div>
+  );
+}
+
+function HayyaMarkLight() {
+  return (
+    <span className="inline-flex items-end justify-center gap-0.5 w-5 h-5" aria-hidden>
+      <i className="block w-1 h-3 bg-current rounded-full -rotate-[24deg] origin-bottom" />
+      <i className="block w-1 h-5 bg-current rounded-full" />
+      <i className="block w-1 h-3 bg-current rounded-full rotate-[24deg] origin-bottom" />
+    </span>
+  );
+}
+
+function ScanIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M7 12h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
   );
 }
 

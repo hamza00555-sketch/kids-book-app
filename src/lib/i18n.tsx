@@ -10,8 +10,8 @@ export type Lang = "ar" | "en";
 
 const dict = {
   ar: {
-    appName: "كتابي الحي",
-    tagline: "اجعل صور كتب الأطفال تنبض بالحياة",
+    appName: "هَيّا",
+    tagline: "افتح كتاباً، افتح عالماً",
     dashboard: "لوحة التحكم",
     myBooks: "كتبي",
     newBook: "كتاب جديد",
@@ -100,8 +100,8 @@ const dict = {
     language: "English",
   },
   en: {
-    appName: "My Living Book",
-    tagline: "Bring children's book pictures to life",
+    appName: "Hayya",
+    tagline: "Open a book. Open a world.",
     dashboard: "Dashboard",
     myBooks: "My books",
     newBook: "New book",

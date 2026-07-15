@@ -10,8 +10,8 @@ const baloo = Baloo_Bhaijaan_2({
 });
 
 export const metadata: Metadata = {
-  title: "كتابي الحي — My Living Book",
-  description: "Bring children's book pictures to life with AR",
+  title: "هَيّا — افتح كتاباً، افتح عالماً",
+  description: "منصة عربية لصناعة كتب أطفال تنبض بالحياة بالواقع المعزّز",
 };
 
 export const viewport: Viewport = {
@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl" className={`${baloo.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col selection:bg-sunshine/60 selection:text-ink">
         <I18nProvider>{children}</I18nProvider>
       </body>
     </html>
